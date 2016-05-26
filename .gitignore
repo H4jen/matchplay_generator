@@ -1,4 +1,8 @@
-Matchplay_generator.cbp
-Matchplay_generator.layout
 bin/
 obj/
+lib/
+pdcurses/
+include/
+Matchplay_generator_console.cbp
+Matchplay_generator_console.depend
+Matchplay_generator_console.layout
