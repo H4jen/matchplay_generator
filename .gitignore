@@ -6,3 +6,6 @@ include/
 Matchplay_generator_console.cbp
 Matchplay_generator_console.depend
 Matchplay_generator_console.layout
+save_data.txt
+save_data_clubs.txt
+save_data_courses.txt§

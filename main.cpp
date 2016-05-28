@@ -3,6 +3,7 @@
 #include "course.h"
 #include "club.h"
 #include "help_functions.h"
+#include "file.h"
 
 #define WIDTH 45
 #define HEIGHT 15
@@ -71,9 +72,6 @@ void course_menu(WINDOW *menu_win);
 void team_menu(WINDOW *menu_win);
 void player_menu(WINDOW *menu_win);
 
-void Add_course_to_club(WINDOW *menu_win);
-
-
 
 enum Menu_states {
     Main_menu = 0,
@@ -139,6 +137,8 @@ int main()
 	startx = (80 - WIDTH) / 2;
 	starty = (24 - HEIGHT) / 2;
 
+	load_data();
+
 	menu_win = newwin(HEIGHT, WIDTH, starty, startx);
 	keypad(menu_win, TRUE);
 	bool go_main_loop = true;
@@ -171,6 +171,7 @@ int main()
     }
 
 	//Wrap-up when finished
+    save_data();
 	clrtoeol();
 	refresh();
 	endwin();
@@ -183,7 +184,7 @@ void main_menu(WINDOW *menu_win)
     int highlight = 1;
     int c;
     enum Mainmenu_choices choice = No_choice;
-
+    load_data();
 
 	print_mainmenu(menu_win, highlight);
 	while(1)
@@ -326,7 +327,7 @@ void course_menu(WINDOW *menu_win)
 		if (choice != No_course_choice){
             switch(choice){
                 case Add_course:
-                    Add_course_to_club(menu_win);
+                    Add_course_to_data(menu_win);
                     Menu_state = Course_menu;
                     return;
                 case List_course:
@@ -574,75 +575,5 @@ void print_playermenu(WINDOW *menu_win, int highlight)
 
 }
 
-//This function helps user add a course to the databank.
-void Add_course_to_club(WINDOW *menu_win)
-{
-    char course_name_cstr[80],course_par_cstr[80];
-    string course_par, course_name;
-
-    //clear mainscreen and window screen
-    clear();
-    refresh();
-    wclear(menu_win);
-    wrefresh(menu_win);
-
-    //Get user inputs
-    // This is for course name
-    bool correct_course_entry = false;
-    while(!correct_course_entry){
-        mvwprintw(menu_win, 0, 0, "Enter course name:");
-        wgetnstr(menu_win, course_name_cstr, 79);
-        course_name.assign(course_name_cstr);
-
-        if(!course_name.empty()) {
-            correct_course_entry = true;
-        }
-        else{
-            mvwprintw(menu_win, 1, 0, "Course name cannot be empty");
-            char c = wgetch(menu_win);
-        }
-
-        wclear(menu_win);
-        wrefresh(menu_win);
-    }
-
-    //Check inputs and print for OK screen
-    bool correct_par_entry = false;
-    while(!correct_par_entry){
-        mvwprintw(menu_win, 0, 0, "Enter course par:");
-        wgetnstr(menu_win, course_par_cstr, 79);
-        course_par.assign(course_par_cstr);
-
-        //Check that the entry is a number and that the number is between 65 and 75.
-        if(is_number(course_par,65,75)) {
-            correct_par_entry = true;
-        }
-        else{
-            mvwprintw(menu_win, 1, 0, "Course par needs to be a number between 65 and 75");
-            char c = wgetch(menu_win);
-        }
-        wclear(menu_win);
-        wrefresh(menu_win);
-    }
-
-    bool check_save_entry_choice = false;
-    while(!check_save_entry_choice){
-        mvwprintw(menu_win, 0, 0, "Save the following course?");
-        mvwprintw(menu_win, 2, 0, "Course Name: %s",course_name.c_str());
-        mvwprintw(menu_win, 3, 0, "Course Par: %s",course_par.c_str());
-        mvwprintw(menu_win, 5, 0, "[Y]: ");
-        char c = wgetch(menu_win);
-
-        if( c == 'y' || c == 'Y' ){
-            check_save_entry_choice = true;
-            mvwprintw(menu_win, 1, 0, "Wohoo we wanna save");
-            char c = wgetch(menu_win);
-        }
-        else if( c == 'n' || c == 'N') {
-            check_save_entry_choice = true;
-        }
-    }
-
-}
 
 

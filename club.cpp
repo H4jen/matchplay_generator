@@ -43,7 +43,6 @@ void Add_club_to_data(WINDOW *menu_win)
         if( c == 'y' || c == 'Y' ){
             check_save_entry_choice = true;
             Add_club_to_vector(club_name);
-            char c = wgetch(menu_win);
         }
         else if( c == 'n' || c == 'N') {
             check_save_entry_choice = true;

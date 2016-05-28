@@ -4,6 +4,14 @@ using namespace std;
 
 #include <iostream>
 #include <vector>
+#include <sstream>
+#include <curses.h>
+#include "help_functions.h"
+
+std::string IntToString ( int number);
+std::string FloatToString ( float number);
+
+
 
 class player {
     float hcp;
@@ -16,12 +24,12 @@ public:
 };
 
 class tee {
+    string tee_name;
     float CR;
     int slope_value;
-    float bogey_value;
-    float scratch_value;
 public:
-    tee (float, int, float,float);
+    std::string get_tee_data_for_saving();
+    tee (std::string,float, int);
 };
 
 class course {
@@ -30,6 +38,7 @@ class course {
     int course_par;
     int course_id;
 public:
+    std::string get_course_data_for_saving();
     course (std::string c_name, int par){ name = c_name;course_par = par;}
 
     //int area () {return (width*height);}
@@ -37,16 +46,19 @@ public:
 
 class club {
     std::string name;
-    vector<course> courses;
     int club_id;
   public:
     club (std::string c_name, int id){ name = c_name;club_id = id; }
+    std::string get_club_data_for_saving();
     int get_clubid(){return club_id;}
     std::string get_clubname(){return name;}
+    std::string get_course_data_for_saving();
     //int area () {return (width*height);}
 };
 
+extern vector<club> clubs;
+extern vector<course> courses;
 
-
+void Add_course_to_data(WINDOW *menu_win);
 
 #endif // COURSE_H_INCLUDED
