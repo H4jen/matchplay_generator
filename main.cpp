@@ -137,11 +137,12 @@ int main()
 	startx = (80 - WIDTH) / 2;
 	starty = (24 - HEIGHT) / 2;
 
-	load_data();
+
 
 	menu_win = newwin(HEIGHT, WIDTH, starty, startx);
 	keypad(menu_win, TRUE);
 	bool go_main_loop = true;
+    load_data(menu_win);
 
     //Start state-machine
     while(go_main_loop == true){
@@ -184,7 +185,6 @@ void main_menu(WINDOW *menu_win)
     int highlight = 1;
     int c;
     enum Mainmenu_choices choice = No_choice;
-    load_data();
 
 	print_mainmenu(menu_win, highlight);
 	while(1)

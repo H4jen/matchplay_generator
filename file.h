@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "course.h"
+#include "club.h"
 
 using namespace std;
 
@@ -12,7 +13,7 @@ extern vector<course> courses;
 extern vector<club> clubs;
 
 void save_data();
-void load_data();
+void load_data(WINDOW *menu_win);
 
 
 

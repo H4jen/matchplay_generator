@@ -12,6 +12,7 @@ extern vector<club> clubs;
 
 void Add_club_to_data(WINDOW *menu_win);
 void Add_club_to_vector(std::string club_name);
+void Add_club_to_vector(std::string club_name,int club_id);
 void List_clubs_in_data(WINDOW *menu_win);
 
 #endif // CLUB_H_INCLUDED

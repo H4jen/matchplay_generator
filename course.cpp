@@ -36,7 +36,7 @@ std::string club::get_club_data_for_saving() {
     out_data.empty();
     temp_data.empty();
 
-    out_data = name + ";" + IntToString(club_id) + "\n";
+    out_data = name + ";" + IntToString(club_id) + ";"+"\n";
     return out_data;
 
 }

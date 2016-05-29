@@ -51,7 +51,7 @@ void Add_club_to_data(WINDOW *menu_win)
 
 }
 
-void Add_club_to_vector(string club_name)
+void Add_club_to_vector(std::string club_name)
 {
     int id = 1;
     //Get next larger ID.
@@ -64,6 +64,20 @@ void Add_club_to_vector(string club_name)
     clubs.push_back(new_club);
 }
 
+void Add_club_to_vector(string club_name,int club_id)
+{
+    int id = -991;
+    //Get next larger ID.
+    for(std::vector<class club>::iterator it = clubs.begin(); it != clubs.end(); ++it) {
+        if(it->get_clubid() == club_id) return;
+    }
+
+    //Store data in vector
+    class club new_club(club_name,club_id);
+    clubs.push_back(new_club);
+}
+
+
 void List_clubs_in_data(WINDOW *menu_win)
 {
     //clear mainscreen and window screen
@@ -74,7 +88,7 @@ void List_clubs_in_data(WINDOW *menu_win)
     int i = 1;
     for(std::vector<class club>::iterator it = clubs.begin(); it != clubs.end(); ++it) {
         i++;
-        mvwprintw(menu_win, 0, 0, "The following clubs are inte the data:");
+        mvwprintw(menu_win, 0, 0, "The following clubs are in the data:");
         mvwprintw(menu_win, i, 0, "Club Name: %s", it->get_clubname().c_str());
         mvwprintw(menu_win, i, 35, "ID: %i",it->get_clubid());
     }
