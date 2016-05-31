@@ -72,8 +72,6 @@ void load_data_clubs(WINDOW *menu_win){
 
 
                 getline(ss, x, ';');  // try to read the next field into it
-                //mvwprintw(menu_win, step_i, 0, x.c_str());
-                //mvwprintw(menu_win, step_i+10, 0, club_name.c_str());
 
                 if(step_i==0){
                     club_name= x;
@@ -94,11 +92,58 @@ void load_data_clubs(WINDOW *menu_win){
   else cout << "Unable to open file";
 }
 
+void load_data_courses(WINDOW *menu_win){
+    // open a file in read mode.
+    std::string line;
+
+    ifstream infile (COURSEFILE);
+    int step_i;
+
+    if (infile.is_open())
+    {
+        while (getline (infile,line))
+        {
+            std::string course_name;
+            int course_id = -1;
+            int par;
+            wclear(menu_win);
+            istringstream ss(line.c_str());
+            step_i = 0;
+            while (!ss.eof())         // See the WARNING above for WHY we're doing this!
+            {
+                std::string x;               // here's a nice, empty string
+
+
+                getline(ss, x, ';');  // try to read the next field into it
+
+                if(step_i==0){
+                    course_name= x;
+                }
+                else if(step_i==1){
+                    par = str_to_num(x);
+
+                }
+                else if(step_i==2){
+                    course_id = str_to_num(x);
+
+                }
+
+                step_i++;
+
+            }
+            Add_course_to_vector(course_name,course_id,par);
+        }
+        infile.close();
+    }
+
+  else cout << "Unable to open file";
+}
+
 
 void load_data(WINDOW *menu_win){
 
     load_data_clubs(menu_win);
-    //load_data_courses();
+    load_data_courses(menu_win);
 
 }
 

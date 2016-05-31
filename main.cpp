@@ -36,6 +36,9 @@ const char *coursemenu_choices[] = {
 			"Add course",
 			"List course",
 			"Delete course",
+			"Add Tee",
+			"List Tees",
+			"Delete Tee",
 			"Exit",
 		  };
 
@@ -104,7 +107,10 @@ enum Coursemenu_choices {
     Add_course = 1,
     List_course= 2,
     Delete_course = 3,
-    Exit_to_main_course = 4
+    Add_tee = 4,
+    List_tees = 5,
+    Delete_tee = 6,
+    Exit_to_main_course = 7
     };
 
 enum Teammenu_choices {
@@ -331,9 +337,20 @@ void course_menu(WINDOW *menu_win)
                     Menu_state = Course_menu;
                     return;
                 case List_course:
+                    List_course_in_data(menu_win);
                     Menu_state = Course_menu;
                     return;
                 case Delete_course:
+                    Menu_state = Course_menu;
+                    return;
+                case Add_tee:
+                    Add_tee_to_data(menu_win);
+                    Menu_state = Course_menu;
+                    return;
+                case List_tees:
+                    Menu_state = Course_menu;
+                    return;
+                case Delete_tee:
                     Menu_state = Course_menu;
                     return;
                 case Exit_to_main_course:

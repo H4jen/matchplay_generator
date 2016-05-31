@@ -11,6 +11,12 @@ using namespace std;
 std::string IntToString ( int number);
 std::string FloatToString ( float number);
 
+void Add_course_to_data(WINDOW *menu_win);
+void Add_course_to_vector(std::string club_name,int par);
+void Add_course_to_vector(std::string club_name,int course_id, int par);
+void List_course_in_data(WINDOW *menu_win);
+
+void Add_tee_to_data(WINDOW *menu_win);
 
 
 class player {
@@ -39,7 +45,9 @@ class course {
     int course_id;
 public:
     std::string get_course_data_for_saving();
-    course (std::string c_name, int par){ name = c_name;course_par = par;}
+    int get_courseid() {return course_id;}
+    std::string get_coursename(){return name;}
+    course (std::string c_name, int id, int par){ name = c_name;course_par = par;course_id=id;}
 
     //int area () {return (width*height);}
 };
@@ -59,6 +67,6 @@ class club {
 extern vector<club> clubs;
 extern vector<course> courses;
 
-void Add_course_to_data(WINDOW *menu_win);
+
 
 #endif // COURSE_H_INCLUDED
