@@ -8,11 +8,14 @@ player::player (std::string p_name, float p_hcp, int p_age, int p_golfid)
     golfid = p_golfid;
 }
 
-tee::tee (std::string name, float tCR, int tslope_value)
+tee::tee (std::string teename, int ttee_id,int tCR, int tslope_value, int tcourseid)
 {
-    tee_name = name;
+    tee_id = ttee_id;
+    name = teename;
     CR=tCR;
     slope_value = tslope_value;
+    course_id = tcourseid;
+
 }
 
 std::string course::get_course_data_for_saving() {
@@ -21,7 +24,7 @@ std::string course::get_course_data_for_saving() {
     temp_data.empty();
 
     out_data = name + ";" + IntToString(course_par) + ";" + IntToString(course_id) + ";"+ "\n";
-    for(std::vector<class tee>::iterator it = course_tees.begin(); it != course_tees.end(); ++it) {
+    for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
         temp_data=it->get_tee_data_for_saving();
         out_data = out_data + temp_data.c_str() + "\n";
         temp_data.empty();
@@ -45,7 +48,7 @@ std::string tee::get_tee_data_for_saving() {
     std::string out_data;
     out_data.empty();
 
-    out_data = tee_name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + "\n";
+    out_data = name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + "\n";
 }
 
 
@@ -182,6 +185,8 @@ void List_course_in_data(WINDOW *menu_win)
 
 }
 
+
+
 std::string find_course_name(int id_wanted)
 {
     std::string course_name;
@@ -223,12 +228,61 @@ int select_course(WINDOW *menu_win)
     return selected_id;
 }
 
+void List_tee_in_data(WINDOW *menu_win)
+{
+    //clear mainscreen and window screen
+    clear();
+    refresh();
+    wclear(menu_win);
+    wrefresh(menu_win);
+    int i = 1;
 
+    //Select the course to add tee to.
+    int sel_id = select_course(menu_win);
+    if (sel_id == -1) return;
+
+    std::string course_name = find_course_name(sel_id);
+    clear();
+
+    wclear(menu_win);
+    wrefresh(menu_win);
+    mvprintw(0, 0, "Selected course with id %i is: %s",sel_id,course_name.c_str());
+    refresh();
+    for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
+        if(sel_id == it->get_courseid()){
+            i++;
+
+            mvwprintw(menu_win, 0, 0, "The following tee's for course %s:",course_name.c_str());
+            mvwprintw(menu_win, i, 0, "Tee Name: %s", it->get_teename().c_str());
+            mvwprintw(menu_win, i, 35,"ID: %i",it->get_teeid());
+        }
+    }
+    char c = wgetch(menu_win);
+}
+
+void Add_tee_to_vector(std::string tee_name, int cr, int slope, int course_id)
+{
+    int id = 1;
+    //Get next larger ID.
+    for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
+        if(it->get_teeid() >= id) id++;
+    }
+
+    //Store data in vector
+    class tee new_tee(tee_name,id,cr,slope,course_id);
+    tees.push_back(new_tee);
+
+}
 
 void Add_tee_to_data(WINDOW *menu_win)
 {
     char tee_name_cstr[80];
-    std::string tee_name;
+    char tee_slope_cstr[80];
+    char tee_cr_cstr[80];
+    std::string tee_name,course_par;
+    std::string tee_slope,tee_cr;
+    int tee_slopenr;
+    float tee_crnr;
 
     //clear mainscreen and window screen
     clear();
@@ -251,7 +305,6 @@ void Add_tee_to_data(WINDOW *menu_win)
 
     //Get user inputs
     // This is for course name
-
     bool correct_tee_entry = false;
     while(!correct_tee_entry){
         mvwprintw(menu_win, 0, 0, "Enter tee name:");
@@ -269,20 +322,37 @@ void Add_tee_to_data(WINDOW *menu_win)
         wclear(menu_win);
         wrefresh(menu_win);
     }
-/*
+
     //Check inputs and print for OK screen
-    bool correct_par_entry = false;
-    while(!correct_par_entry){
-        mvwprintw(menu_win, 0, 0, "Enter course par:");
-        wgetnstr(menu_win, course_par_cstr, 79);
-        course_par.assign(course_par_cstr);
+    bool correct_tee_cr_entry = false;
+    bool correct_tee_slope_entry = false;
+    while(!correct_tee_slope_entry){
+        mvwprintw(menu_win, 0, 0, "Enter slope rating:");
+        wgetnstr(menu_win, tee_slope_cstr, 79);
+        tee_slope.assign(tee_slope_cstr);
 
         //Check that the entry is a number and that the number is between 65 and 75.
-        if(is_number(course_par,65,75)) {
-            correct_par_entry = true;
+        if(is_number(tee_slope_cstr,50,200)) {
+            correct_tee_slope_entry = true;
         }
         else{
-            mvwprintw(menu_win, 1, 0, "Course par needs to be a number between 65 and 75");
+            mvwprintw(menu_win, 1, 0, "Tee slope needs to be a number between 50 and 200");
+            char c = wgetch(menu_win);
+        }
+        wclear(menu_win);
+        wrefresh(menu_win);
+    }
+    while(!correct_tee_cr_entry ){
+        mvwprintw(menu_win, 0, 0, "Enter tee course rating (CR) in 0.1 resol (ex. 67.4 = 674):");
+        wgetnstr(menu_win, tee_cr_cstr, 79);
+        tee_cr.assign(tee_cr_cstr);
+
+        //Check that the entry is a number and that the number is between 65 and 75.
+        if(is_number(tee_cr_cstr,500,900)) {
+            correct_tee_cr_entry = true;
+        }
+        else{
+            mvwprintw(menu_win, 1, 0, "Tee CR needs to be a number between 500 and 900");
             char c = wgetch(menu_win);
         }
         wclear(menu_win);
@@ -291,13 +361,15 @@ void Add_tee_to_data(WINDOW *menu_win)
 
     bool check_save_entry_choice = false;
     while(!check_save_entry_choice){
-        mvwprintw(menu_win, 0, 0, "Save the following course?");
-        mvwprintw(menu_win, 2, 0, "Course Name: %s",course_name.c_str());
-        mvwprintw(menu_win, 3, 0, "Course Par: %s",course_par.c_str());
-        mvwprintw(menu_win, 5, 0, "[Y]: ");
+        mvwprintw(menu_win, 0, 0, "Save the following tee?");
+        mvwprintw(menu_win, 2, 0, "Tee Name: %s",tee_name.c_str());
+        mvwprintw(menu_win, 3, 0, "Tee rating(CR): %s",tee_cr.c_str());
+        mvwprintw(menu_win, 4, 0, "Tee slope: %s",tee_slope.c_str());
+        mvwprintw(menu_win, 5, 0, "Course id: %i",sel_id);
+        mvwprintw(menu_win, 7, 0, "[N] or [Y]: ");
         char c = wgetch(menu_win);
         if( c == 'y' || c == 'Y' ){
-            Add_course_to_vector(course_name,str_to_num(course_par));
+            Add_tee_to_vector(tee_name,str_to_num(tee_cr),str_to_num(tee_slope),sel_id);
             check_save_entry_choice = true;
 
         }
@@ -305,7 +377,7 @@ void Add_tee_to_data(WINDOW *menu_win)
             check_save_entry_choice = true;
         }
     }
-*/
+
 }
 
 

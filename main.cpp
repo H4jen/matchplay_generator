@@ -15,6 +15,7 @@ int starty = 0;
 //Main vectors to hold data of course players teams eg.
 vector<course> courses;
 vector<club> clubs;
+vector<tee> tees;
 
 
 const char *mainmenu_choices[] = {
@@ -348,6 +349,7 @@ void course_menu(WINDOW *menu_win)
                     Menu_state = Course_menu;
                     return;
                 case List_tees:
+                    List_tee_in_data(menu_win);
                     Menu_state = Course_menu;
                     return;
                 case Delete_tee:

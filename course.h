@@ -17,6 +17,8 @@ void Add_course_to_vector(std::string club_name,int course_id, int par);
 void List_course_in_data(WINDOW *menu_win);
 
 void Add_tee_to_data(WINDOW *menu_win);
+void Add_tee_to_vector(std::string tee_name, int cr, int slope, int course_id);
+void List_tee_in_data(WINDOW *menu_win);
 
 
 class player {
@@ -30,17 +32,21 @@ public:
 };
 
 class tee {
-    string tee_name;
-    float CR;
+    string name;
+    int CR;
     int slope_value;
+    int tee_id;
+    int course_id; //Contains the course this tee belongs to
 public:
+    tee (std::string,int,int, int,int);
     std::string get_tee_data_for_saving();
-    tee (std::string,float, int);
+    std::string get_teename(){return name;}
+    int get_teeid() {return tee_id;}
+    int get_courseid() {return course_id;}
 };
 
 class course {
     std::string name;
-    std::vector<class tee> course_tees;
     int course_par;
     int course_id;
 public:
@@ -66,6 +72,7 @@ class club {
 
 extern vector<club> clubs;
 extern vector<course> courses;
+extern vector<tee> tees;
 
 
 
