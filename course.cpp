@@ -8,12 +8,14 @@ player::player (std::string p_name, float p_hcp, int p_age, int p_golfid)
     golfid = p_golfid;
 }
 
-tee::tee (std::string teename, int ttee_id,int tCR, int tslope_value, int tcourseid)
+tee::tee (std::string teename, int ttee_id,int tCR, int tslope_value,int tCR_w, int tslope_value_w, int tcourseid)
 {
     tee_id = ttee_id;
     name = teename;
     CR=tCR;
     slope_value = tslope_value;
+    CR_w=tCR_w;
+    slope_value_w = tslope_value_w;
     course_id = tcourseid;
 
 }
@@ -24,12 +26,6 @@ std::string course::get_course_data_for_saving() {
     temp_data.empty();
 
     out_data = name + ";" + IntToString(course_par) + ";" + IntToString(course_id) + ";"+ "\n";
-    for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
-        temp_data=it->get_tee_data_for_saving();
-        out_data = out_data + temp_data.c_str() + "\n";
-        temp_data.empty();
-    }
-
     return out_data;
 
 }
@@ -48,7 +44,7 @@ std::string tee::get_tee_data_for_saving() {
     std::string out_data;
     out_data.empty();
 
-    out_data = name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + "\n";
+    out_data = name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + ";" +IntToString(tee_id) + ";" + IntToString(course_id) + ";\n";
 }
 
 
@@ -250,17 +246,17 @@ void List_tee_in_data(WINDOW *menu_win)
     refresh();
     for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
         if(sel_id == it->get_courseid()){
-            i++;
+            i++;i++;
 
-            mvwprintw(menu_win, 0, 0, "The following tee's for course %s:",course_name.c_str());
-            mvwprintw(menu_win, i, 0, "Tee Name: %s", it->get_teename().c_str());
-            mvwprintw(menu_win, i, 35,"ID: %i",it->get_teeid());
+            mvwprintw(menu_win, 0, 0, "Tee's for course %s:",course_name.c_str());
+            mvwprintw(menu_win, i, 0, "ID: %i Name: %s slope %i slope_w: %i cr %i cr_w: %i", it->get_teeid(),it->get_teename().c_str(),it->get_slope(),it->get_slope_women(),it->get_cr(),it->get_cr_women() );
+
         }
     }
     char c = wgetch(menu_win);
 }
 
-void Add_tee_to_vector(std::string tee_name, int cr, int slope, int course_id)
+void Add_tee_to_vector(std::string tee_name, int cr, int slope,int cr_w, int slope_w, int course_id)
 {
     int id = 1;
     //Get next larger ID.
@@ -269,7 +265,7 @@ void Add_tee_to_vector(std::string tee_name, int cr, int slope, int course_id)
     }
 
     //Store data in vector
-    class tee new_tee(tee_name,id,cr,slope,course_id);
+    class tee new_tee(tee_name,id,cr,slope,cr_w,slope_w,course_id);
     tees.push_back(new_tee);
 
 }
@@ -278,9 +274,12 @@ void Add_tee_to_data(WINDOW *menu_win)
 {
     char tee_name_cstr[80];
     char tee_slope_cstr[80];
+    char tee_slope_w_cstr[80];
     char tee_cr_cstr[80];
+    char tee_cr_w_cstr[80];
     std::string tee_name,course_par;
     std::string tee_slope,tee_cr;
+    std::string tee_slope_w,tee_cr_w;
     int tee_slopenr;
     float tee_crnr;
 
@@ -327,7 +326,7 @@ void Add_tee_to_data(WINDOW *menu_win)
     bool correct_tee_cr_entry = false;
     bool correct_tee_slope_entry = false;
     while(!correct_tee_slope_entry){
-        mvwprintw(menu_win, 0, 0, "Enter slope rating:");
+        mvwprintw(menu_win, 0, 0, "Enter male tee slope rating:");
         wgetnstr(menu_win, tee_slope_cstr, 79);
         tee_slope.assign(tee_slope_cstr);
 
@@ -342,8 +341,29 @@ void Add_tee_to_data(WINDOW *menu_win)
         wclear(menu_win);
         wrefresh(menu_win);
     }
+    correct_tee_slope_entry = false;
+    wclear(menu_win);
+    wrefresh(menu_win);
+    while(!correct_tee_slope_entry){
+        mvwprintw(menu_win, 0, 0, "Enter female tee slope rating:");
+        wgetnstr(menu_win, tee_slope_w_cstr, 79);
+        tee_slope_w.assign(tee_slope_w_cstr);
+
+        //Check that the entry is a number and that the number is between 65 and 75.
+        if(is_number(tee_slope_w_cstr,50,200)) {
+            correct_tee_slope_entry = true;
+        }
+        else{
+            mvwprintw(menu_win, 1, 0, "Tee slope needs to be a number between 50 and 200");
+            char c = wgetch(menu_win);
+        }
+        wclear(menu_win);
+        wrefresh(menu_win);
+    }
+    wclear(menu_win);
+    wrefresh(menu_win);
     while(!correct_tee_cr_entry ){
-        mvwprintw(menu_win, 0, 0, "Enter tee course rating (CR) in 0.1 resol (ex. 67.4 = 674):");
+        mvwprintw(menu_win, 0, 0, "Enter male tee CR in 0.1 resol (ex. 67.4 = 674):");
         wgetnstr(menu_win, tee_cr_cstr, 79);
         tee_cr.assign(tee_cr_cstr);
 
@@ -358,18 +378,39 @@ void Add_tee_to_data(WINDOW *menu_win)
         wclear(menu_win);
         wrefresh(menu_win);
     }
+    wclear(menu_win);
+    wrefresh(menu_win);
+    correct_tee_cr_entry = false;
+    while(!correct_tee_cr_entry ){
+        mvwprintw(menu_win, 0, 0, "Enter female tee CR in 0.1 resol (ex. 67.4 = 674):");
+        wgetnstr(menu_win, tee_cr_w_cstr, 79);
+        tee_cr_w.assign(tee_cr_w_cstr);
+
+        //Check that the entry is a number and that the number is between 65 and 75.
+        if(is_number(tee_cr_w_cstr,500,900)) {
+            correct_tee_cr_entry = true;
+        }
+        else{
+            mvwprintw(menu_win, 1, 0, "Tee CR needs to be a number between 500 and 900");
+            char c = wgetch(menu_win);
+        }
+        wclear(menu_win);
+        wrefresh(menu_win);
+    }
 
     bool check_save_entry_choice = false;
     while(!check_save_entry_choice){
         mvwprintw(menu_win, 0, 0, "Save the following tee?");
         mvwprintw(menu_win, 2, 0, "Tee Name: %s",tee_name.c_str());
-        mvwprintw(menu_win, 3, 0, "Tee rating(CR): %s",tee_cr.c_str());
-        mvwprintw(menu_win, 4, 0, "Tee slope: %s",tee_slope.c_str());
-        mvwprintw(menu_win, 5, 0, "Course id: %i",sel_id);
-        mvwprintw(menu_win, 7, 0, "[N] or [Y]: ");
+        mvwprintw(menu_win, 3, 0, "Tee rating male(CR): %s",tee_cr.c_str());
+        mvwprintw(menu_win, 4, 0, "Tee rating female(CR): %s",tee_cr_w.c_str());
+        mvwprintw(menu_win, 5, 0, "Tee slope male: %s",tee_slope.c_str());
+        mvwprintw(menu_win, 6, 0, "Tee slope female: %s",tee_slope_w.c_str());
+        mvwprintw(menu_win, 7, 0, "Course id: %i",sel_id);
+        mvwprintw(menu_win, 9, 0, "[N] or [Y]: ");
         char c = wgetch(menu_win);
         if( c == 'y' || c == 'Y' ){
-            Add_tee_to_vector(tee_name,str_to_num(tee_cr),str_to_num(tee_slope),sel_id);
+            Add_tee_to_vector(tee_name,str_to_num(tee_cr),str_to_num(tee_slope),str_to_num(tee_cr_w),str_to_num(tee_slope_w),sel_id);
             check_save_entry_choice = true;
 
         }

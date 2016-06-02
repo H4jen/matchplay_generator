@@ -5,7 +5,7 @@
 #include "help_functions.h"
 #include "file.h"
 
-#define WIDTH 45
+#define WIDTH 65
 #define HEIGHT 15
 
 

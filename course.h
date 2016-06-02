@@ -33,15 +33,19 @@ public:
 
 class tee {
     string name;
-    int CR;
-    int slope_value;
+    int CR,CR_w;
+    int slope_value,slope_value_w;
     int tee_id;
     int course_id; //Contains the course this tee belongs to
 public:
-    tee (std::string,int,int, int,int);
+    tee (std::string,int,int,int,int,int,int);
     std::string get_tee_data_for_saving();
     std::string get_teename(){return name;}
     int get_teeid() {return tee_id;}
+    int get_slope() {return slope_value;}
+    int get_slope_women() {return slope_value_w;}
+    int get_cr() {return CR;}
+    int get_cr_women() {return CR_w;}
     int get_courseid() {return course_id;}
 };
 

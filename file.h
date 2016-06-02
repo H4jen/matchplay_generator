@@ -11,6 +11,7 @@ using namespace std;
 
 extern vector<course> courses;
 extern vector<club> clubs;
+extern vector<tee> tees;
 
 void save_data();
 void load_data(WINDOW *menu_win);
