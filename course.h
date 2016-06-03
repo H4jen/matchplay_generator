@@ -17,17 +17,19 @@ void Add_course_to_vector(std::string club_name,int course_id, int par);
 void List_course_in_data(WINDOW *menu_win);
 
 void Add_tee_to_data(WINDOW *menu_win);
-void Add_tee_to_vector(std::string tee_name, int cr, int slope, int course_id);
+void Add_tee_to_vector(std::string tee_name, int cr, int slope,int cr_w, int slope_w,int course_id);
+void Add_tee_to_vector(std::string tee_name, int cr, int slope,int cr_w, int slope_w, int tee_id,int course_id);
 void List_tee_in_data(WINDOW *menu_win);
 
 
 class player {
-    float hcp;
-    int age;
+    int hcp;
     std::string name;
     int golfid;
+    int club_id;
 public:
-    player (std::string, float, int, int);
+    player (std::string, int, int, int);
+    std::string get_player_data_for_saving();
     //int area () {return (width*height);}
 };
 
@@ -70,13 +72,13 @@ class club {
     std::string get_club_data_for_saving();
     int get_clubid(){return club_id;}
     std::string get_clubname(){return name;}
-    std::string get_course_data_for_saving();
     //int area () {return (width*height);}
 };
 
 extern vector<club> clubs;
 extern vector<course> courses;
 extern vector<tee> tees;
+extern vector<player> players;
 
 
 

@@ -1,9 +1,8 @@
 #include "course.h"
 
-player::player (std::string p_name, float p_hcp, int p_age, int p_golfid)
+player::player (std::string p_name, int p_hcp, int p_age, int p_golfid)
 {
     hcp=p_hcp;
-    age=p_age;
     name = p_name;
     golfid = p_golfid;
 }
@@ -30,6 +29,17 @@ std::string course::get_course_data_for_saving() {
 
 }
 
+
+std::string player::get_player_data_for_saving() {
+    std::string out_data, temp_data;
+    out_data.empty();
+    temp_data.empty();
+
+    out_data = name + ";" + IntToString(golfid) + ";" + IntToString(hcp) + ";"+ IntToString(club_id) + "\n";
+    return out_data;
+
+}
+
 std::string club::get_club_data_for_saving() {
     std::string out_data, temp_data;
     out_data.empty();
@@ -43,8 +53,8 @@ std::string club::get_club_data_for_saving() {
 std::string tee::get_tee_data_for_saving() {
     std::string out_data;
     out_data.empty();
-
-    out_data = name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + ";" +IntToString(tee_id) + ";" + IntToString(course_id) + ";\n";
+    out_data = name + ";" + FloatToString(CR) + ";" + IntToString(slope_value) + ";" + FloatToString(CR_w) + ";" + IntToString(slope_value_w) + ";" +IntToString(tee_id) + ";" + IntToString(course_id) + ";\n";
+    return out_data;
 }
 
 
@@ -91,7 +101,7 @@ void Add_course_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Course name cannot be empty");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
 
         wclear(menu_win);
@@ -111,7 +121,7 @@ void Add_course_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Course par needs to be a number between 65 and 75");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
         wclear(menu_win);
         wrefresh(menu_win);
@@ -122,7 +132,7 @@ void Add_course_to_data(WINDOW *menu_win)
         mvwprintw(menu_win, 0, 0, "Save the following course?");
         mvwprintw(menu_win, 2, 0, "Course Name: %s",course_name.c_str());
         mvwprintw(menu_win, 3, 0, "Course Par: %s",course_par.c_str());
-        mvwprintw(menu_win, 5, 0, "[Y]: ");
+        mvwprintw(menu_win, 5, 0, "[N] or [Y]: ");
         char c = wgetch(menu_win);
         if( c == 'y' || c == 'Y' ){
             Add_course_to_vector(course_name,str_to_num(course_par));
@@ -177,7 +187,7 @@ void List_course_in_data(WINDOW *menu_win)
         mvwprintw(menu_win, i, 0, "Course Name: %s", it->get_coursename().c_str());
         mvwprintw(menu_win, i, 35, "ID: %i",it->get_courseid());
     }
-    char c = wgetch(menu_win);
+    wgetch(menu_win);
 
 }
 
@@ -253,10 +263,24 @@ void List_tee_in_data(WINDOW *menu_win)
 
         }
     }
-    char c = wgetch(menu_win);
+    wgetch(menu_win);
 }
 
 void Add_tee_to_vector(std::string tee_name, int cr, int slope,int cr_w, int slope_w, int course_id)
+{
+    int id = 1;
+    //Get next larger ID.
+    for(std::vector<class tee>::iterator it = tees.begin(); it != tees.end(); ++it) {
+        if(it->get_teeid() >= id) id++;
+    }
+
+    //Store data in vector
+    class tee new_tee(tee_name,id,cr,slope,cr_w,slope_w,course_id);
+    tees.push_back(new_tee);
+
+}
+
+void Add_tee_to_vector(std::string tee_name, int cr, int slope,int cr_w, int slope_w, int tee_id,int course_id)
 {
     int id = 1;
     //Get next larger ID.
@@ -280,8 +304,7 @@ void Add_tee_to_data(WINDOW *menu_win)
     std::string tee_name,course_par;
     std::string tee_slope,tee_cr;
     std::string tee_slope_w,tee_cr_w;
-    int tee_slopenr;
-    float tee_crnr;
+
 
     //clear mainscreen and window screen
     clear();
@@ -315,7 +338,7 @@ void Add_tee_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Tee name cannot be empty");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
 
         wclear(menu_win);
@@ -336,7 +359,7 @@ void Add_tee_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Tee slope needs to be a number between 50 and 200");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
         wclear(menu_win);
         wrefresh(menu_win);
@@ -355,7 +378,7 @@ void Add_tee_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Tee slope needs to be a number between 50 and 200");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
         wclear(menu_win);
         wrefresh(menu_win);
@@ -373,7 +396,7 @@ void Add_tee_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Tee CR needs to be a number between 500 and 900");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
         wclear(menu_win);
         wrefresh(menu_win);
@@ -392,7 +415,7 @@ void Add_tee_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Tee CR needs to be a number between 500 and 900");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
         wclear(menu_win);
         wrefresh(menu_win);

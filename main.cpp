@@ -16,6 +16,7 @@ int starty = 0;
 vector<course> courses;
 vector<club> clubs;
 vector<tee> tees;
+vector<player> players;
 
 
 const char *mainmenu_choices[] = {

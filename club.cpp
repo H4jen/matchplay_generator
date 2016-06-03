@@ -25,7 +25,7 @@ void Add_club_to_data(WINDOW *menu_win)
         }
         else{
             mvwprintw(menu_win, 1, 0, "Club name cannot be empty");
-            char c = wgetch(menu_win);
+            wgetch(menu_win);
         }
 
         wclear(menu_win);
@@ -66,7 +66,7 @@ void Add_club_to_vector(std::string club_name)
 
 void Add_club_to_vector(string club_name,int club_id)
 {
-    int id = -991;
+
     //Get next larger ID.
     for(std::vector<class club>::iterator it = clubs.begin(); it != clubs.end(); ++it) {
         if(it->get_clubid() == club_id) return;
@@ -92,6 +92,6 @@ void List_clubs_in_data(WINDOW *menu_win)
         mvwprintw(menu_win, i, 0, "Club Name: %s", it->get_clubname().c_str());
         mvwprintw(menu_win, i, 35, "ID: %i",it->get_clubid());
     }
-    char c = wgetch(menu_win);
+    wgetch(menu_win);
 
 }
